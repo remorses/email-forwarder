@@ -1,18 +1,8 @@
 import imaps from 'imap-simple'
 
-const sleep = (time) =>
-    new Promise((res, rej) => setTimeout(() => res(null), time))
-
-const zip = (...arrays) => {
-    const length = Math.min(...arrays.map((arr) => arr.length))
-    return Array.from({ length }, (value, index) =>
-        arrays.map((array) => array[index])
-    )
-}
-
 const extractEmail = (str: string) => {
     const match = /.*<(.+)>.*/.exec(str)
-    return match ? match[1] : str
+    return match ? match[1].trim() : str
 }
 
 const getPastDate = (days) => {
@@ -58,6 +48,9 @@ export default ({
                                     res.parts.find(
                                         (part) => part.which === 'HEADER'
                                     ) || ({} as any)
+                                // console.log(
+                                //     JSON.stringify(heads, null, '\t')
+                                // )
                                 const text =
                                     res.parts.find(
                                         (part) => part.which === 'TEXT'
@@ -66,7 +59,11 @@ export default ({
                                     body: (text.body as string) || '',
                                     subject:
                                         (heads.body.subject[0] as string) || '',
-                                    to: extractEmail(heads.body.to.length ? heads.body.to[0] : '')
+                                    to: extractEmail(
+                                        heads.body.to.length
+                                            ? heads.body.to[0]
+                                            : ''
+                                    )
                                 }
                             })
                             // console.log(zip(subjects, bodies))

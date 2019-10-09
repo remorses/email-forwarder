@@ -10,7 +10,5 @@ RUN npm ci
 
 COPY . /src/
 
-RUN npx tsc
-
 ENTRYPOINT ["dumb-init", "--"]
 CMD ["npm", "start"]

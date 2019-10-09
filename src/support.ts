@@ -6,3 +6,15 @@ export const getCode = (body) => {
         return code.replace(/ /g, '')
     }
 }
+
+
+
+export const sleep = (time) =>
+    new Promise((res, rej) => setTimeout(() => res(true), time))
+
+export const zip = (...arrays) => {
+    const length = Math.min(...arrays.map((arr) => arr.length))
+    return Array.from({ length }, (value, index) =>
+        arrays.map((array) => array[index])
+    )
+}

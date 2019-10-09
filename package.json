@@ -9,6 +9,7 @@
     "/dist/*"
   ],
   "scripts": {
+    "start": "node dist/index.js",
     "test": "mocha --require ts-node/register --timeout 10000 tests/* --colors"
   },
   "keywords": [],
@@ -25,7 +26,13 @@
   },
   "dependencies": {
     "@types/imap-simple": "^4.2.1",
+    "@types/md5": "^2.1.33",
+    "@types/node-fetch": "^2.5.2",
     "dotenv": "^8.1.0",
-    "imap-simple": "^4.3.0"
+    "imap-simple": "^4.3.0",
+    "md5": "^2.2.1",
+    "node-fetch": "^2.6.0",
+    "sql-template-strings": "^2.2.2",
+    "sqlite": "^3.0.3"
   }
 }

@@ -1,5 +1,25 @@
 version: '3'
 services:
     email_verifier:
-        
+        build: .
+        environment: 
+            # - email=
+            # - password=
+            - subject_regex=.*
+            - webhook=http://webhook
+        env_file: 
+            - .env
+    webhook:
+        build: example_webhook
+        # this invokes the puppeteer
+        # this can also be a browserless function
+        # this service:
+        # - takes the cookies based on the `to` field,
+        # - takes the verification url from `body`
+        # - create a new tab on headless chrome, apply cookies, goes to url
+        # receives the object {
+        #     body: '<html>...<html>',
+        #     subject: 'ciao',
+        #     to: 'email@sd.it',
+        # }
     
