@@ -1,14 +1,13 @@
 require('dotenv').config()
 import { strict as assert } from 'assert'
-import searchEmail from '../src/searchEmail'
+import getEmails from '../src/getEmails'
 
 
 it('reads my emails', async () => {
-    const x = await searchEmail({
+    const emails = await getEmails({
         email: process.env.EMAIL,
         password: process.env.PASSWORD,
-        regex: /.*homyatol.*/,
         lastNDays: 5,
     })
-    console.log('\n', JSON.stringify(x.subject, null, '    '))
+    console.log('\n', JSON.stringify(emails.map(({to}) => to), null, '    '))
 })

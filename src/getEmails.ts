@@ -10,6 +10,11 @@ const zip = (...arrays) => {
     )
 }
 
+const extractEmail = (str: string) => {
+    const match = /.*<(.+)>.*/.exec(str)
+    return match ? match[1] : str
+}
+
 const getPastDate = (days) => {
     const delay = days * 24 * 3600 * 1000
     var yesterdayDate = new Date(Date.now() - delay)
@@ -19,9 +24,8 @@ const getPastDate = (days) => {
 export default ({
     email,
     password,
-    regex,
     lastNDays
-}): Promise<{ body: string; subject: string }> => {
+}): Promise<{ body: string; subject: string; to: string }[]> => {
     const config = {
         imap: {
             user: email, // process.env.GMAIL_EMAIL,
@@ -49,34 +53,25 @@ export default ({
                         )
                         .then((results) => {
                             // console.log(results)
-                            const subjects = results.map((res) => {
-                                return res.parts
-                                    .filter((part) => part.which === 'HEADER')
-                                    .map((x) => x.body.subject[0])[0]
-                            })
-                            // console.log('fetched emails ' + subjects)
-                            const bodies = results.map((res) => {
-                                return res.parts
-                                    .filter((part) => part.which === 'TEXT')
-                                    .map((x) => x.body || '')[0]
+                            const data = results.map((res) => {
+                                const heads =
+                                    res.parts.find(
+                                        (part) => part.which === 'HEADER'
+                                    ) || ({} as any)
+                                const text =
+                                    res.parts.find(
+                                        (part) => part.which === 'TEXT'
+                                    ) || ({} as any)
+                                return {
+                                    body: (text.body as string) || '',
+                                    subject:
+                                        (heads.body.subject[0] as string) || '',
+                                    to: extractEmail(heads.body.to.length ? heads.body.to[0] : '')
+                                }
                             })
                             // console.log(zip(subjects, bodies))
-                            const data = zip(subjects, bodies).map((v) => ({
-                                subject: v[0],
-                                body: v[1] || ''
-                            }))
-                            // connection.end()
-                            const matched = data.filter((x) =>
-                                x.subject.match(regex)
-                            )
-                            if (matched.length) {
-                                connection.end()
-                                res(matched[0])
-                                return
-                            } else {
-                                rej(Error('not found'))
-                                connection.end()
-                            }
+                            connection.end()
+                            res(data)
                         })
                 })
             })

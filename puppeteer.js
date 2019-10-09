@@ -4,6 +4,7 @@ const fs = require('fs')
 const year = 60 * 60 * 24 * 360
 
 async function main(settingsPath) {
+    // TODO add proxy, take url for chackpoint from argument
     const url = 'https://instagram.com'
     const browser = await puppeteer.launch({ headless: false })
     const settings = JSON.parse(
