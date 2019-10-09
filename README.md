@@ -7,7 +7,7 @@ reads email and forwards email that have a regex in the subject to a webhook
 version: '3'
 services:
     email_verifier:
-        build: .
+        image: xmorse/email-forwarder
         environment: 
             - email=
             - password=
