@@ -42,7 +42,6 @@ export default ({
                         markSeen: false
                     }
 
-                    console.log(getPastDate(10))
                     connection
                         .search(
                             [['SINCE', getPastDate(lastNDays)]],
