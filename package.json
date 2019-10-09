@@ -5,7 +5,9 @@
   "description": "",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "files": ["/dist/*"],
+  "files": [
+    "/dist/*"
+  ],
   "scripts": {
     "test": "mocha --require ts-node/register --timeout 10000 tests/* --colors"
   },
@@ -18,5 +20,10 @@
     "mocha": "^6.1.4",
     "ts-node": "^8.2.0",
     "typescript": "^3.5.1"
+  },
+  "dependencies": {
+    "@types/imap-simple": "^4.2.1",
+    "dotenv": "^8.1.0",
+    "imap-simple": "^4.3.0"
   }
 }
