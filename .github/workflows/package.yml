@@ -26,8 +26,8 @@ jobs:
       - name: Publish Image
         run: |
           set -x
-          docker build . -t xmorse/email-verifier:latest
-          docker push xmorse/email-verifier:latest
+          docker build . -t xmorse/email-forwarder:latest
+          docker push xmorse/email-forwarder:latest
       - run: npm version --no-git-tag-version patch
       - name: Bump version
         uses: remorses/bump-version@js
