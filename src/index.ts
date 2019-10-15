@@ -34,7 +34,7 @@ const deleteOldEmails = (db) => {
 const dbPath = 'var/lib/data'
 
 const main = async () => {
-    if (fs.existsSync(dbPath)) {
+    if (!fs.existsSync(dbPath)) {
         fs.mkdirSync(dbPath, { recursive: true })
     }
     const db = await sqlite.open(dbPath + '/db.sqlite')
