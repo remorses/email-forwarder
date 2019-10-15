@@ -14,6 +14,8 @@ import * as fs from 'fs'
 import md5 from 'md5'
 import { sleep } from './support'
 
+const CHECK_INTERVAL = Number(process.env.check_interval || 60 * 60)
+
 const hasAlreadySentEmail = (db: sqlite.Database, key) => {
     return db.get(sql`SELECT * FROM emails WHERE hash = ${key}`)
 }
@@ -65,7 +67,7 @@ const main = async () => {
                 body: JSON.stringify(data)
             })
         }
-        await sleep(1000 * 60 * 60)
+        await sleep(1000 * CHECK_INTERVAL)
     }
 }
 

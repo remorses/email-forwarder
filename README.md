@@ -13,6 +13,7 @@ services:
             - password=
             - subject_regex=.*
             - webhook=http://webhook
+            - check_interval=60 # one minute
     webhook:
         build: example_webhook
         # this webhook can for example go to the url in the email to verify email
