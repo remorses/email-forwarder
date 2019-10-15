@@ -10,6 +10,7 @@ import sqlite from 'sqlite'
 import fetch from 'node-fetch'
 import getEmails from './getEmails'
 import sql from 'sql-template-strings'
+import * as fs from 'fs'
 import md5 from 'md5'
 import { sleep } from './support'
 
@@ -22,9 +23,7 @@ const now = () => Math.round(new Date().getTime() / 1000)
 const insertEmail = async (db, { subject, body }) => {
     const hash = md5(body)
     const query = sql`INSERT INTO emails (hash, subject, timestamp) VALUES (${hash}, ${subject}, ${now()})`
-    await db.run(
-        query
-    )
+    await db.run(query)
 }
 
 const deleteOldEmails = (db) => {
@@ -32,8 +31,13 @@ const deleteOldEmails = (db) => {
     return db.run(sql`DELETE FROM emails WHERE timestamp < ${weekAgo}`)
 }
 
+const dbPath = 'var/lib/data'
+
 const main = async () => {
-    const db = await sqlite.open('var/lib/data/db.sqlite')
+    if (fs.existsSync(dbPath)) {
+        fs.mkdirSync(dbPath, { recursive: true })
+    }
+    const db = await sqlite.open(dbPath + '/db.sqlite')
     await db.migrate({})
     const { email, password, subject_regex, webhook } = process.env
     if (!email || !password || !subject_regex || !webhook) {
