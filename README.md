@@ -1,6 +1,7 @@
 # Email forwarder
 
 reads email and forwards email that have a regex in the subject to a webhook
+**the webhook must accept OPTIONS requests to see when webhook is reachable**
 
 ## usage
 ```yml

@@ -33,6 +33,27 @@ const deleteOldEmails = (db) => {
     return db.run(sql`DELETE FROM emails WHERE timestamp < ${weekAgo}`)
 }
 
+const waitForHost = async (url) => {
+    while (true) {
+        await sleep(1000)
+        try {
+            const res = await fetch(url, {
+                method: 'OPTIONS',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                },
+            })
+            if (!res.ok) {
+                throw Error('bad response for head req')
+            }
+            return
+        } catch (e) {
+            console.log('hook ' + url + ' still not reachable')
+        }
+    }
+}
+
 const dbPath = 'var/lib/data'
 
 const main = async () => {
@@ -45,6 +66,7 @@ const main = async () => {
     if (!email || !password || !subject_regex || !webhook) {
         throw Error('incomplete env')
     }
+    await waitForHost(webhook)
     while (true) {
         await deleteOldEmails(db)
         const emails = await getEmails({ email, password, lastNDays: 0.1 })
@@ -56,16 +78,20 @@ const main = async () => {
                 console.log('email already propagated, ' + data.subject)
                 continue
             }
-            await insertEmail(db, data)
             console.log('propagating email ' + data.subject)
-            await fetch(webhook, {
-                method: 'POST',
-                headers: {
-                    Accept: 'application/json',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(data)
-            })
+            try {
+                await fetch(webhook, {
+                    method: 'POST',
+                    headers: {
+                        Accept: 'application/json',
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data),
+                })
+                await insertEmail(db, data)
+            } catch (e) {
+                console.log('cannot send to hook + ' + e)
+            }
         }
         await sleep(1000 * CHECK_INTERVAL)
     }
