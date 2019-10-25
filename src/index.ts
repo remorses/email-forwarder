@@ -38,7 +38,7 @@ const waitForHost = async (url) => {
         await sleep(1000)
         try {
             const res = await fetch(url, {
-                method: 'OPTIONS',
+                method: 'OPTIONS', // options not enabled in all servers
                 headers: {
                     Accept: 'application/json',
                     'Content-Type': 'application/json',
@@ -66,7 +66,7 @@ const main = async () => {
     if (!email || !password || !subject_regex || !webhook) {
         throw Error('incomplete env')
     }
-    await waitForHost(webhook)
+    // await waitForHost(webhook)
     while (true) {
         await deleteOldEmails(db)
         const emails = await getEmails({ email, password, lastNDays: 0.1 })
@@ -90,7 +90,8 @@ const main = async () => {
                 })
                 await insertEmail(db, data)
             } catch (e) {
-                console.log('cannot send to hook + ' + e)
+                console.log('cannot send to hook + ' + e + ' waiting next cycle')
+                await sleep(1000)
             }
         }
         await sleep(1000 * CHECK_INTERVAL)
